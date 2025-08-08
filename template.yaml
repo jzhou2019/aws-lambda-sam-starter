@@ -16,14 +16,23 @@ Resources:
       CodeUri: hello_world/
       Description: A Lambda function using Powertools and tested with pytest
       MemorySize: 128
+      Environment:
+        Variables:
+          S3_FILE_PATH: "s3://your-bucket/path/to/file.txt"   # Update this value as needed
+      VpcConfig:
+        SubnetIds:
+          - YOUR_SUBNET_ID_1
+          - YOUR_SUBNET_ID_2
+        SecurityGroupIds:
+          - YOUR_SECURITY_GROUP_ID
       Events:
-        HelloWorld:
-          Type: Api
+        ScheduleEvent:
+          Type: Schedule
           Properties:
-            Path: /hello
-            Method: get
+            Schedule: cron(0 12 * * ? *)
+            # Runs at 12:00 PM UTC every day. Adjust as needed.
 
 Outputs:
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  LambdaScheduleRule:
+    Description: "EventBridge rule for scheduled Lambda"
+    Value: !Ref HelloWorldFunction
